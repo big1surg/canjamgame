@@ -118,9 +118,9 @@
 	}
 	
 	function update(id, score){
-		if(score===10){
+		if(score>=10){
 			window.location.href="winner.html";
-		}else if (score===-10){
+		}else if (score<=-10){
 			window.location.href="loser.html";
 		}else{
 			document.getElementById(id).innerHTML=score;
