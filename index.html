@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<style>
+		#playerNames{
+			width: 100%;
+			padding: 50px 0;
+			text-align: center;
+			margin-top: 20px;
+		}
+		
+		#scores{
+			width: 100%;
+			padding: 50px 0;
+			text-align: center;
+			margin-top: 20px;
+		}
+		
+	</style>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Can Jam</title>
+  </head>
+  <body>
+        <div class="jumbotron">
+            <h1 class="display-4">Can Jam Game</h1>
+		<p class="lead">Score ranges from -10 to 10</p>
+		<p class="lead">Each miss is -1, Each hit is +2, Slitting is = AUTOMATIC WIN!</p>
+        </div>
+		
+		<div class="container-fluid" id="playerNames">
+            <h2>
+                Players
+            </h2>
+			Player 1: <input type="text" id="playerOne" value="Player 1">
+			Player 2: <input type="text" id="playerTwo" value="Player 2">
+			<button onclick="setNames()">Set Names</button>
+        </div>
+		
+		<div class="container-fluid">
+            <h2>
+                Scores
+            </h2>
+        </div>
+		
+		<div class="container-fluid" id="scores">
+			<!--player one-->
+			<h3 style="color:red;" id="playerOneName"></h3>
+            <div>
+				Score : <h1 class="display-4" id="playerOneScore"></h1>
+				<button onclick="playerOneScores()">Hit</button>
+				<button onclick="playerOneMisses()">Miss</button>
+			<div>
+			<!--player two-->
+			<h3 style="color:blue;" id="playerTwoName"></h3>
+			<div>
+				Score : <h1 class="display-4" id="playerTwoScore"></h1>
+				<button onclick="playerTwoScores()">Hit</button>
+				<button onclick="playerTwoMisses()">Miss</button>
+			<div>
+        </div>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	
+	<script>
+	//player varables
+	var player1 = "Player 1";
+	var player2 = "Player 2";
+	var playerOneScore = 0;
+	var playerTwoScore = 0;
+	//set player names
+	function setNames(){
+		player1 = document.getElementById("playerOne").value;
+		player2 = document.getElementById("playerTwo").value;
+		
+		var playerNameDiv = document.getElementById("playerNames");
+		if(playerNameDiv.style.display ==="none"){
+			playerNameDiv.style.display = "block";
+		}else{
+			playerNameDiv.style.display = "none"; 
+		}
+		
+		document.getElementById('playerOneName').innerHTML = player1;
+		document.getElementById('playerTwoName').innerHTML = player2;
+		
+	}
+	
+	function playerOneScores(){
+		playerOneScore+=2;
+		update("playerOneScore",playerOneScore);
+	}
+	
+	function playerOneMisses(){
+		playerOneScore--;
+		update("playerOneScore",playerOneScore);
+	}
+	
+	function playerTwoScores(){
+		playerTwoScore+=2;
+		update("playerTwoScore",playerTwoScore);
+	}
+	
+	function playerTwoMisses(){
+		playerTwoScore--;
+		update("playerTwoScore",playerTwoScore);
+	}
+	
+	function update(id, score){
+		if(score===10){
+			window.location.href="winner.html";
+		}else if (score===-10){
+			window.location.href="loser.html";
+		}else{
+			document.getElementById(id).innerHTML=score;
+		}
+		
+	}
+	</script>
+  </body>
+</html>
