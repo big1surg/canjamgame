@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	
 	<style>
+		.jumbotron{
+			background-image: url();
+			background-repeat: no-repeat;
+			background-size: 1000px 1000px;
+			background-position: center;
+		}
+	
 		#playerNames{
 			width: 100%;
 			padding: 50px 0;
@@ -30,8 +37,8 @@
   <body>
         <div class="jumbotron">
             <h1 class="display-4">Can Jam Game</h1>
-		<p class="lead">Score ranges from -10 to 10</p>
-		<p class="lead">Each miss is -1, Each hit is +2, Slitting is = AUTOMATIC WIN!</p>
+			<p class="lead">Score ranges from -10 to 10</p>
+			<p class="lead">Each miss is -1, Each hit is +2, Slitting = AUTOMATIC WIN!</p>
         </div>
 		
 		<div class="container-fluid" id="playerNames">
@@ -54,17 +61,47 @@
 			<h3 style="color:red;" id="playerOneName"></h3>
             <div>
 				Score : <h1 class="display-4" id="playerOneScore"></h1>
-				<button onclick="playerOneScores()">Hit</button>
-				<button onclick="playerOneMisses()">Miss</button>
-			<div>
+				<button onclick="score(1,1)">Hit</button>
+				<button onclick="score(1,2)">Miss</button>
+				<button onclick="score(1,3)">Off the top!</button>
+				<p id="player1quickStats"></h4>
+			</div>
 			<!--player two-->
 			<h3 style="color:blue;" id="playerTwoName"></h3>
 			<div>
 				Score : <h1 class="display-4" id="playerTwoScore"></h1>
-				<button onclick="playerTwoScores()">Hit</button>
-				<button onclick="playerTwoMisses()">Miss</button>
-			<div>
+				<button onclick="score(2,1)">Hit</button>
+				<button onclick="score(2,2)">Miss</button>
+				<button onclick="score(2,3)">Off the top!</button>
+				<p id="player2quickStats"></h4>
+			</div>
         </div>
+		<!--
+		<div class="container-fluid">
+            <h2>
+                Stats
+            </h2>
+        </div>
+		
+		<div class="container-fluid" id="stats">
+			<h4 id="playerOneStats"></h4>
+				<ul>
+					<li>Times thrown = <p id="player1throws"></p></li>
+					<li>Miss Streak = <p id="player1missStreak"></p></li>
+					<li>Hit Streak = <p id="player1hitStreak"></p></li>
+					<li>Total Hits = <p id="player1hits"></p></li>
+					<li>Total Misses = <p id="player1misses"></p></li>
+				</ul>
+			<h4 id="playerTwoStats"></h4>
+				<ul>
+					<li>Times thrown = <p id="player2throws"></p></li>
+					<li>Miss Streak = <p id="player2missStreak"></p></li>
+					<li>Hit Streak = <p id="player2hitStreak"></p></li>
+					<li>Total Hits = <p id="player2hits"></p></li>
+					<li>Total Misses = <p id="player2misses"></p></li>
+				</ul>
+        </div>
+		-->
 
 
 
@@ -80,6 +117,12 @@
 	var player2 = "Player 2";
 	var playerOneScore = 0;
 	var playerTwoScore = 0;
+	
+	//stats
+	//throws, hit streak, miss streak, total hits, total misses
+	var p1Stats = {tosses:0, hitStreak:0, missStreak:0, hits:0, misses:0};
+	var p2Stats = {tosses:0, hitStreak:0, missStreak:0, hits:0, misses:0};
+	
 	//set player names
 	function setNames(){
 		player1 = document.getElementById("playerOne").value;
@@ -94,34 +137,104 @@
 		
 		document.getElementById('playerOneName').innerHTML = player1;
 		document.getElementById('playerTwoName').innerHTML = player2;
+		//document.getElementById('playerOneStats').innerHTML = player1;
+		//document.getElementById('playerTwoStats').innerHTML = player2;
+		update("playerOneScore",playerOneScore);
+		update("playerTwoScore",playerTwoScore);
+		
+		quickStats(1);
+		quickStats(2);
 		
 	}
 	
-	function playerOneScores(){
-		playerOneScore+=2;
-		update("playerOneScore",playerOneScore);
+	function setStats(player){
+		document.getElementById(player+"throws").innerHTML = 0;
+		document.getElementById(player+"missStreak").innerHTML = 0;
+		document.getElementById(player+"hitStreak").innerHTML = 0;
+		document.getElementById(player+"hits").innerHTML = 0;
+		document.getElementById(player+"misses").innerHTML = 0;
 	}
 	
-	function playerOneMisses(){
-		playerOneScore--;
-		update("playerOneScore",playerOneScore);
+	function quickStats(id){
+		if(id===1){
+			document.getElementById("player1quickStats").innerHTML= "Throws: "+p1Stats.tosses+" Hit Streak: "+p1Stats.hitStreak+" Miss Streak: "+p1Stats.missStreak+" Hits: "+p1Stats.hits+" Misses: "+p1Stats.misses;
+		}else{
+			document.getElementById("player2quickStats").innerHTML= "Throws: "+p2Stats.tosses+" Hit Streak: "+p2Stats.hitStreak+" Miss Streak: "+p2Stats.missStreak+" Hits: "+p2Stats.hits+" Misses: "+p2Stats.misses;
+		}
+	}
+	//hit=1, miss=2, fiver=3
+	function score(player, hit){
+		if(player===1){
+			switch(hit){
+				case 1:
+					//if hit, throws inc, missStreak back to 0, hits inc
+					playerOneScore+=2;
+					p1Stats.tosses++;
+					p1Stats.missStreak=0;
+					p1Stats.hits++;
+					p1Stats.hitStreak++;
+					update("playerOneScore",playerOneScore, player1);
+					quickStats(1);
+					break;
+				case 2:
+					//if miss, thorws inc, hitStreak back to 0, misses inc, inc missStreak
+					playerOneScore--;
+					p1Stats.tosses++;
+					p1Stats.hitStreak=0;
+					p1Stats.misses++;
+					p1Stats.missStreak++;
+					update("playerOneScore",playerOneScore, player1);
+					quickStats(1);
+					break;
+				case 3:
+					//if 5er, throws inc, missStreak back to 0, hits inc, inc hitStreak
+					playerOneScore+=5;
+					p1Stats.tosses++;
+					p1Stats.missStreak=0;
+					p1Stats.hits++;
+					p1Stats.hitStreak++;
+					update("playerOneScore",playerOneScore, player1);
+					quickStats(1);
+					break;
+			}
+		}else{
+			switch(hit){
+				case 1:
+					playerTwoScore+=2;
+					p2Stats.tosses++;
+					p2Stats.missStreak=0;
+					p2Stats.hits++;
+					p2Stats.hitStreak++;
+					update("playerTwoScore",playerTwoScore, player2);
+					quickStats(2);
+					break;
+				case 2:
+					playerTwoScore--;
+					p2Stats.tosses++;
+					p2Stats.hitStreak=0;
+					p2Stats.misses++;
+					p2Stats.missStreak++;
+					update("playerTwoScore",playerTwoScore,player2);
+					quickStats(2);
+					break;
+				case 3:
+					playerTwoScore+=5;
+					p1Stats.tosses++;
+					p1Stats.missStreak=0;
+					p1Stats.hits++;
+					p1Stats.hitStreak++;
+					update("playerTwoScore",playerTwoScore,player2);
+					quickStats(2);
+					break;
+			}
+		}
 	}
 	
-	function playerTwoScores(){
-		playerTwoScore+=2;
-		update("playerTwoScore",playerTwoScore);
-	}
-	
-	function playerTwoMisses(){
-		playerTwoScore--;
-		update("playerTwoScore",playerTwoScore);
-	}
-	
-	function update(id, score){
+	function update(id, score, player){
 		if(score>=10){
-			window.location.href="winner.html";
+			document.getElementById(id).innerHTML=player+" wins!"
 		}else if (score<=-10){
-			window.location.href="loser.html";
+			document.getElementById(id).innerHTML=player+" loses!"
 		}else{
 			document.getElementById(id).innerHTML=score;
 		}
