@@ -22,7 +22,7 @@
 			margin-top: 20px;
 		}
 		
-		#scores{
+		#scores{   
 			width: 100%;
 			padding: 50px 0;
 			text-align: center;
@@ -51,7 +51,7 @@
 			<br/><br/>
 			Player 2: <input type="text" id="playerTwo" value="Player 2">
 			<br/><br/>
-			<button onclick="setNames()">Set Names</button>
+			<button onclick="startGame()">Start</button>
         </div>
 		<div class="container-fluid" id="scores">
 			<!--player one-->
@@ -59,9 +59,10 @@
 			<h3 style="color:red;" id="playerOneName"></h3>
             <div>
 				Score : <h1 class="display-4" id="playerOneScore"></h1>
-				<button onclick="score(1,1)">Hit</button>
-				<button onclick="score(1,2)">Miss</button>
-				<button onclick="score(1,3)">Off the top!</button>
+				<button onclick="Score(p1,1)">Hit</button>
+				<button onclick="Score(p1,2)">Miss</button>
+				<button onclick="Score(p1,3)">Off the top</button>
+				<button onclick="Score(p1,4)">Slit Baby!</button>
 				<p id="player1quickStats"></h4>
 			</div>
 			<!--player two-->
@@ -69,36 +70,36 @@
 			<h3 style="color:blue;" id="playerTwoName"></h3>
 			<div>
 				Score : <h1 class="display-4" id="playerTwoScore"></h1>
-				<button onclick="score(2,1)">Hit</button>
-				<button onclick="score(2,2)">Miss</button>
-				<button onclick="score(2,3)">Off the top!</button>
+				<button onclick="Score(p2,1)">Hit</button>
+				<button onclick="Score(p2,2)">Miss</button>
+				<button onclick="Score(p2,3)">Off the top!</button>
+				<button onclick="Score(p2,4)">Slit Baby!</button>
 				<p id="player2quickStats"></h4>
 			</div>
         </div>
-		
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-	
 	<script>
-	//player varables
-	var player1 = "Player 1";
-	var player2 = "Player 2";
-	var playerOneScore = 0;
-	var playerTwoScore = 0;
+	//constructor
+	function Player(name, score, tosses, hitStreak, missStreak, hits, misses, scoreElement, statsElement){
+		this.name=name;
+		this.score=score;
+		this.tosses=tosses;
+		this.hitStreak=hitStreak;
+		this.missStreak=missStreak;
+		this.hits=hits;
+		this.misses=misses;
+		this.scoreElement=scoreElement;
+		this.statsElement=statsElement;
+	}
 	
-	//stats
-	//throws, hit streak, miss streak, total hits, total misses
-	var p1Stats = {tosses:0, hitStreak:0, missStreak:0, hits:0, misses:0};
-	var p2Stats = {tosses:0, hitStreak:0, missStreak:0, hits:0, misses:0};
-	
+	//initialize
+	var p1 = new Player("Player", 0,0,0,0,0,0,"playerOneScore","player1quickStats");
+	var p2 = new Player("Player", 0,0,0,0,0,0,"playerTwoScore","player2quickStats");
+
 	//set player names
-	function setNames(){
-		player1 = document.getElementById("playerOne").value;
-		player2 = document.getElementById("playerTwo").value;
-		
+	function startGame(){
+		//this makes name section disappear upon button click
 		var playerNameDiv = document.getElementById("playerNames");
 		if(playerNameDiv.style.display ==="none"){
 			playerNameDiv.style.display = "block";
@@ -106,100 +107,82 @@
 			playerNameDiv.style.display = "none"; 
 		}
 		
-		document.getElementById('playerOneName').innerHTML = player1;
-		document.getElementById('playerTwoName').innerHTML = player2;
-		update("playerOneScore",playerOneScore);
-		update("playerTwoScore",playerTwoScore);
+		//get player names on click
+		p1.name = document.getElementById("playerOne").value;
+		p2.name = document.getElementById("playerTwo").value;
 		
-		quickStats(1);
-		quickStats(2);
+		//set player names
+		document.getElementById('playerOneName').innerHTML = p1.name;
+		document.getElementById('playerTwoName').innerHTML = p2.name;
+		
+		//update element to show score
+		update(p1);
+		update(p2);
+		
+		//grab stats 
+		quickStats(p1);
+		quickStats(p2);
 		
 	}
 	
-	function quickStats(id){
-		if(id===1){
-			document.getElementById("player1quickStats").innerHTML= "Throws: "+p1Stats.tosses+", Hit Streak: "+p1Stats.hitStreak+", Miss Streak: "+p1Stats.missStreak+", Hits: "+p1Stats.hits+", Misses: "+p1Stats.misses;
-		}else{
-			document.getElementById("player2quickStats").innerHTML= "Throws: "+p2Stats.tosses+", Hit Streak: "+p2Stats.hitStreak+", Miss Streak: "+p2Stats.missStreak+", Hits: "+p2Stats.hits+", Misses: "+p2Stats.misses;
-		}
+	function quickStats(p){
+		document.getElementById(p.statsElement).innerHTML= "Throws: "+p.tosses+", Hits: "+p.hits+", Hit Streak: "+p.hitStreak+", Misses: "+p.misses+", Miss Streak: "+p.missStreak;
 	}
+	
 	//hit=1, miss=2, fiver=3
-	function score(player, hit){
-		if(player===1){
+	function Score(p, hit){
 			switch(hit){
 				case 1:
 					//if hit, throws inc, missStreak back to 0, hits inc
-					playerOneScore+=2;
-					p1Stats.tosses++;
-					p1Stats.missStreak=0;
-					p1Stats.hits++;
-					p1Stats.hitStreak++;
-					update("playerOneScore",playerOneScore, player1);
-					quickStats(1);
+					p.score+=2;
+					p.tosses++;
+					p.missStreak=0;
+					p.hits++;
+					p.hitStreak++;
+					update(p);
+					quickStats(p);
 					break;
 				case 2:
 					//if miss, thorws inc, hitStreak back to 0, misses inc, inc missStreak
-					playerOneScore--;
-					p1Stats.tosses++;
-					p1Stats.hitStreak=0;
-					p1Stats.misses++;
-					p1Stats.missStreak++;
-					update("playerOneScore",playerOneScore, player1);
-					quickStats(1);
+					p.score--;
+					p.tosses++;
+					p.hitStreak=0;
+					p.misses++;
+					p.missStreak++;
+					update(p);
+					quickStats(p);
 					break;
 				case 3:
 					//if 5er, throws inc, missStreak back to 0, hits inc, inc hitStreak
-					playerOneScore+=5;
-					p1Stats.tosses++;
-					p1Stats.missStreak=0;
-					p1Stats.hits++;
-					p1Stats.hitStreak++;
-					update("playerOneScore",playerOneScore, player1);
-					quickStats(1);
+					p.score+=5;
+					p.tosses++;
+					p.missStreak=0;
+					p.hits++;
+					p.hitStreak++;
+					update(p);
+					quickStats(p);
+					break;
+				case 4:
+					//slit, throws inc, missStreak back to 0, hits inc, score+10
+					p.score+=10;
+					p.tosses++;
+					p.missStreak=0;
+					p.hits++;
+					p.hitStreak++;
+					update(p);
+					quickStats(p);
 					break;
 			}
-		}else{
-			switch(hit){
-				case 1:
-					playerTwoScore+=2;
-					p2Stats.tosses++;
-					p2Stats.missStreak=0;
-					p2Stats.hits++;
-					p2Stats.hitStreak++;
-					update("playerTwoScore",playerTwoScore, player2);
-					quickStats(2);
-					break;
-				case 2:
-					playerTwoScore--;
-					p2Stats.tosses++;
-					p2Stats.hitStreak=0;
-					p2Stats.misses++;
-					p2Stats.missStreak++;
-					update("playerTwoScore",playerTwoScore,player2);
-					quickStats(2);
-					break;
-				case 3:
-					playerTwoScore+=5;
-					p1Stats.tosses++;
-					p1Stats.missStreak=0;
-					p1Stats.hits++;
-					p1Stats.hitStreak++;
-					update("playerTwoScore",playerTwoScore,player2);
-					quickStats(2);
-					break;
-			}
-		}
 	}
 	
-	function update(id, score, player){
-		if(score>=10){
-			document.getElementById(id).innerHTML=player+" wins!"
-		}else if (score<=-10){
-			document.getElementById(id).innerHTML=player+" loses!"
+	function update(player){
+		if(player.score>=10){
+			document.getElementById(player.scoreElement).innerHTML=player.name+" wins!"
+		}else if (player.score<=-10){
+			document.getElementById(player.scoreElement).innerHTML=player.name+" loses!"
 		}else{
-			document.getElementById(id).innerHTML=score;
+			document.getElementById(player.scoreElement).innerHTML=player.score;
 		}
-		
 	}
 	</script>
   </body>
