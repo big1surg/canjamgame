@@ -34,7 +34,12 @@
 			height:65px;
 			width:30%;
 		}
-		#player{
+		.btn-warning{
+			height:40px;
+			width: 60px;
+		}
+		#playerDetails{
+			display: inline;
 		}
 		
 	</style>
@@ -63,8 +68,10 @@
 		<div class="container-fluid" id="scores">
 			<!--player one-->
 			<div id="player">
-				<img src="player1.jpg" class="rounded-circle" height="60px" width="60px">
-				<h3 style="color:red;" id="playerOneName"></h3>
+				<div id="playerDetails">
+					<!--<img src="player1.jpg" class="rounded-circle" height="60px" width="60px">-->
+					<h3 style="color:red;" id="playerOneName"></h3>
+				</div>
 				<div>
 					Score : <h1 class="display-4" id="playerOneScore"></h1>
 					<p>
@@ -76,12 +83,15 @@
 						<button onclick="Score(p1,3)" class = "btn btn-default" id="otherButtons">Top</button>
 						<button onclick="Score(p1,4)" class = "btn btn-default" id="otherButtons">Slit</button>
 					</p>
+					<p>
+						<button onclick="undo(p1)" class="btn btn-warning">Undo</button>
+					</p>
 					<p id="player1quickStats"></p>
 				</div>
 			</div>
 			<!--player two-->
 			<div id="player">
-				<img src="player2.jpg" class="rounded-circle" height="60px" width="60px">
+				<!--<img src="player2.jpg" class="rounded-circle" height="60px" width="60px">-->
 				<h3 style="color:blue;" id="playerTwoName"></h3>
 				<div>
 					Score : <h1 class="display-4" id="playerTwoScore"></h1>
@@ -93,6 +103,9 @@
 						<button onclick="Score(p2,5)" class = "btn btn-default" id="otherButtons">Bank</button>
 						<button onclick="Score(p2,3)" class = "btn btn-default" id="otherButtons">Top</button>
 						<button onclick="Score(p2,4)" class = "btn btn-default" id="otherButtons">Slit</button>
+					</p>
+					<p>
+						<button onclick="undo(p2)" class="btn btn-warning">Undo</button>
 					</p>
 					<p id="player2quickStats"></p>
 				</div>
@@ -199,6 +212,7 @@
 					p.missStreak=0;
 					p.hits++;
 					p.hitStreak++;
+					p.lastHit=1;
 					checkMax(p);
 					update(p);
 					quickStats(p);
@@ -210,6 +224,7 @@
 					p.hitStreak=0;
 					p.misses++;
 					p.missStreak++;
+					p.lastHit=2;
 					checkMax(p)
 					update(p);
 					quickStats(p);
@@ -221,6 +236,7 @@
 					p.missStreak=0;
 					p.hits++;
 					p.hitStreak++;
+					p.lastHit=3;
 					checkMax(p);
 					update(p);
 					quickStats(p);
@@ -232,6 +248,7 @@
 					p.missStreak=0;
 					p.hits++;
 					p.hitStreak++;
+					p.lastHit=4;
 					checkMax(p);
 					update(p);
 					quickStats(p);
@@ -243,6 +260,7 @@
 					p.missStreak=0;
 					p.hits++;
 					p.hitStreak++;
+					p.lastHit=5;
 					checkMax(p);
 					update(p);
 					quickStats(p);
@@ -276,7 +294,68 @@
 	}
 	
 	//function undo, keep track of last item 
-	function undo(){
+	function undo(p){
+		switch(p.lastHit){
+			case 1:
+				p.score-=2;
+				p.tosses--;
+				p.missStreak=0;
+				p.hits--;
+				p.hitStreak--;
+				//p.maxHitStreak--;
+				p.lastHit=0;
+				update(p);
+				quickStats(p);
+				break;
+			case 2:
+				//if miss, thorws inc, hitStreak back to 0, misses inc, inc missStreak
+				p.score++;
+				p.tosses--;
+				p.hitStreak=0;
+				p.misses--;
+				p.missStreak--;
+				//p.maxMissStreak--;
+				p.lastHit=0;
+				update(p);
+				quickStats(p);
+				break;
+			case 3:
+				//if 5er, throws inc, missStreak back to 0, hits inc, inc hitStreak
+				p.score-=5;
+				p.tosses--;
+				p.missStreak=0;
+				p.hits--;
+				p.hitStreak--;
+				p.lastHit=0;
+				//p.maxHitStreak--;
+				update(p);
+				quickStats(p);
+				break;
+			case 4:
+				//slit, throws inc, missStreak back to 0, hits inc, score+10
+				p.score-=10;
+				p.tosses--;
+				p.missStreak=0;
+				p.hits--;
+				p.hitStreak--;
+				p.lastHit=0;
+				//p.maxHitStreak--;
+				update(p);
+				quickStats(p);
+				break;
+			case 5:
+				//bank, throws inc, missStreak back to 0, hits inc, score+10
+				p.score-=3;
+				p.tosses--;
+				p.missStreak=0;
+				p.hits--;
+				p.hitStreak--;
+				//p.maxHitStreak--;
+				p.lastHit=0;
+				update(p);
+				quickStats(p);
+				break;
+		}
 		
 	}
 	
