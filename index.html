@@ -14,21 +14,18 @@
 			color: white;
 			text-shadow: 2px 2px black;
 		}
-		
 		#playerNames{
 			width: 100%;
 			padding: 50px 0;
 			text-align: center;
 			margin-top: 20px;
 		}
-		
 		#scores{   
 			width: 100%;
 			padding: 50px 0;
 			text-align: center;
 			margin-top: 20px;
 		}
-		
 	</style>
 
     <!-- Bootstrap CSS -->
@@ -61,6 +58,7 @@
 				Score : <h1 class="display-4" id="playerOneScore"></h1>
 				<button onclick="Score(p1,1)">Hit</button>
 				<button onclick="Score(p1,2)">Miss</button>
+				<button onclick="Score(p1,5)">Bank</button>
 				<button onclick="Score(p1,3)">Off the top</button>
 				<button onclick="Score(p1,4)">Slit Baby!</button>
 				<p id="player1quickStats"></h4>
@@ -70,18 +68,24 @@
 			<h3 style="color:blue;" id="playerTwoName"></h3>
 			<div>
 				Score : <h1 class="display-4" id="playerTwoScore"></h1>
-				<button onclick="Score(p2,1)">Hit</button>
-				<button onclick="Score(p2,2)">Miss</button>
-				<button onclick="Score(p2,3)">Off the top!</button>
-				<button onclick="Score(p2,4)">Slit Baby!</button>
-				<p id="player2quickStats"></h4>
+				<button onclick="Score(p1,1)">Hit</button>
+				<button onclick="Score(p1,2)">Miss</button>
+				<button onclick="Score(p1,5)">Bank</button>
+				<button onclick="Score(p1,3)">Off the top</button>
+				<button onclick="Score(p1,4)">Slit Baby!</button>
 			</div>
         </div>
-
+		
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	
 	<script>
+
 	//constructor
-	function Player(name, score, tosses, hitStreak, missStreak, hits, misses, scoreElement, statsElement){
+	function Player(name, score, tosses, hitStreak, missStreak, hits, misses, scoreElement, statsElement, maxHitStreak, maxMissStreak){
 		this.name=name;
 		this.score=score;
 		this.tosses=tosses;
@@ -91,11 +95,13 @@
 		this.misses=misses;
 		this.scoreElement=scoreElement;
 		this.statsElement=statsElement;
+		this.maxHitStreak=maxHitStreak;
+		this.maxMissStreak=maxMissStreak;
 	}
 	
 	//initialize
-	var p1 = new Player("Player", 0,0,0,0,0,0,"playerOneScore","player1quickStats");
-	var p2 = new Player("Player", 0,0,0,0,0,0,"playerTwoScore","player2quickStats");
+	var p1 = new Player("Player", 0,0,0,0,0,0,"playerOneScore","player1quickStats", 0,0);
+	var p2 = new Player("Player", 0,0,0,0,0,0,"playerTwoScore","player2quickStats", 0,0);
 
 	//set player names
 	function startGame(){
@@ -126,7 +132,7 @@
 	}
 	
 	function quickStats(p){
-		document.getElementById(p.statsElement).innerHTML= "Throws: "+p.tosses+", Hits: "+p.hits+", Hit Streak: "+p.hitStreak+", Misses: "+p.misses+", Miss Streak: "+p.missStreak;
+		document.getElementById(p.statsElement).innerHTML= "Throws: "+p.tosses+", Hits: "+p.hits+", Hit Streak: "+p.hitStreak+", Max Hit Streak: "+p.maxHitStreak+", Misses: "+p.misses+", Miss Streak: "+p.missStreak+", Max Miss Streak: "+p.maxMissStreak;
 	}
 	
 	//hit=1, miss=2, fiver=3
@@ -139,6 +145,7 @@
 					p.missStreak=0;
 					p.hits++;
 					p.hitStreak++;
+					checkMax(p);
 					update(p);
 					quickStats(p);
 					break;
@@ -149,6 +156,7 @@
 					p.hitStreak=0;
 					p.misses++;
 					p.missStreak++;
+					checkMax(p)
 					update(p);
 					quickStats(p);
 					break;
@@ -159,6 +167,7 @@
 					p.missStreak=0;
 					p.hits++;
 					p.hitStreak++;
+					checkMax(p);
 					update(p);
 					quickStats(p);
 					break;
@@ -169,10 +178,35 @@
 					p.missStreak=0;
 					p.hits++;
 					p.hitStreak++;
+					checkMax(p);
 					update(p);
 					quickStats(p);
 					break;
+				case 5:
+					//bank, throws inc, missStreak back to 0, hits inc, score+10
+					p.score+=3;
+					p.tosses++;
+					p.missStreak=0;
+					p.hits++;
+					p.hitStreak++;
+					checkMax(p);
+					update(p);
+					quickStats(p);
+					break;
+				
 			}
+	}
+	
+	//this function checks the max for both hit streaks and miss streaks so it is not reset to 0
+	function checkMax(player){
+		//current score IS higher than max
+		if(player.hitStreak>player.maxHitStreak){
+			player.maxHitStreak=player.hitStreak;
+		}
+		
+		if(player.missStreak>player.maxMissStreak){
+			player.maxMissStreak=player.missStreak;
+		}
 	}
 	
 	function update(player){
@@ -184,6 +218,7 @@
 			document.getElementById(player.scoreElement).innerHTML=player.score;
 		}
 	}
+	
 	</script>
   </body>
 </html>
